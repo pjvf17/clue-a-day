@@ -1,0 +1,29 @@
+{
+  "name": "clue-a-day",
+  "version": "1.0.0",
+  "description": "This is a project to create a simple, framework-less solution to having a \"puzzle of the day\" type puzzle easily embedded in a website.",
+  "homepage": "https://github.com/pjvf17/clue-a-day#readme",
+  "bugs": {
+    "url": "https://github.com/pjvf17/clue-a-day/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pjvf17/clue-a-day.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "main.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node build.js",
+    "build:watch": "node build.js --watch"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.1",
+    "typescript": "^5.8.2"
+  },
+  "dependencies": {},
+  "peerDependencies": {},
+  "keywords": []
+}
