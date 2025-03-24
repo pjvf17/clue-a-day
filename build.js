@@ -11,27 +11,27 @@ const sharedConfig = {
 const watchMode = process.argv.includes('--watch');
 
 async function buildAll() {
-  const cjsContext = await esbuild.context({
-    ...sharedConfig,
-    platform: 'node', // for CJS
-    outfile: "dist/index.js",
-  });
+  // const cjsContext = await esbuild.context({
+  //   ...sharedConfig,
+  //   platform: 'node', // for CJS
+  //   outfile: "dist/index.cjs.js",
+  // });
 
   const esmContext = await esbuild.context({
     ...sharedConfig,
     platform: 'neutral', // for ESM
     format: "esm",
-    outfile: "dist/index.esm.js",
+    outfile: "dist/index.js",
   });
 
   if (watchMode) {
-    await cjsContext.watch();
+    // await cjsContext.watch();
     await esmContext.watch();
     console.log("👀 Watching for changes...");
   } else {
-    await cjsContext.rebuild();
+    // await cjsContext.rebuild();
     await esmContext.rebuild();
-    await cjsContext.dispose();
+    // await cjsContext.dispose();
     await esmContext.dispose();
     console.log("✅ Build complete");
   }
