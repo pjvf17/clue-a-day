@@ -4,7 +4,7 @@ const { dependencies, peerDependencies } = require('./package.json');
 const sharedConfig = {
   entryPoints: ["src/index.ts"],
   bundle: true,
-  minify: true,
+  minify: false,
   external: Object.keys(dependencies || {}).concat(Object.keys(peerDependencies || {})),
 };
 
@@ -21,7 +21,7 @@ async function buildAll() {
     ...sharedConfig,
     platform: 'neutral', // for ESM
     format: "esm",
-    outfile: "dist/index.js",
+    outfile: "dist/clue.js",
   });
 
   if (watchMode) {

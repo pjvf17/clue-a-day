@@ -1,1 +1,110 @@
-async function h(r){let e=new TextEncoder().encode(r),o=await window.crypto.subtle.digest("SHA-256",e);return Array.from(new Uint8Array(o)).map(m=>m.toString(16).padStart(2,"0")).join("")}var b=(r,{cellSize:e=50,cellColor:o="#ffffff",focusColor:g="#ffcc00"}={})=>{let i="http://www.w3.org/2000/svg",m="http://www.w3.org/1999/xhtml",f=r*e,E=e,u=document.createElementNS(i,"svg");u.setAttribute("width",f.toString()),u.setAttribute("height",E.toString());for(let t=0;t<r;t++){let c=t*e,n=document.createElementNS(i,"rect");n.setAttribute("x",c.toString()),n.setAttribute("y","0"),n.setAttribute("width",e.toString()),n.setAttribute("height",e.toString()),n.setAttribute("fill",o),n.setAttribute("stroke","black"),u.appendChild(n);let l=document.createElementNS(i,"foreignObject");l.setAttribute("x",c.toString()),l.setAttribute("y","0"),l.setAttribute("width",e.toString()),l.setAttribute("height",e.toString());let s=document.createElementNS(m,"input");s.setAttribute("type","text"),s.setAttribute("maxlength","1"),s.classList.add("crossword-cell"),s.setAttribute("id",`cell-${t}`),s.addEventListener("focus",()=>{s.select(),n.setAttribute("fill",g)}),s.addEventListener("blur",()=>{n.setAttribute("fill",o)}),s.addEventListener("input",a=>{let d=a.target;d.value=d.value.toUpperCase(),d.value.length===1&&t<r-1&&document.getElementById(`cell-${t+1}`)?.focus()}),s.addEventListener("keydown",a=>{a.key==="ArrowRight"&&t<r-1?(a.preventDefault(),document.getElementById(`cell-${t+1}`)?.focus()):a.key==="ArrowLeft"&&t>0&&(a.preventDefault(),document.getElementById(`cell-${t-1}`)?.focus())}),l.appendChild(s),u.appendChild(l)}return{svg:u,getUserInputHash:async()=>{let t="";for(let c=0;c<r;c++){let n=document.getElementById(`cell-${c}`);t+=(n?.value||"").toUpperCase()}return await h(t)}}},w=document.getElementById("crossword-container"),p=b(5,{cellColor:"#516770",focusColor:"#695170"});w?.appendChild(p.svg);var A=document.getElementById("submit-button"),y=async(r,e=p.getUserInputHash)=>{let o=document.getElementById("result"),g=await e(),i=await r();g===i?(o.textContent="\u2705 Correct!",o.style.color="green"):(o.textContent="\u274C Try Again.",o.style.color="red")},v=async()=>await h("HELLO");A?.addEventListener("click",()=>y(v));export{b as generateInteractiveCrossword};
+// src/index.ts
+async function digestMessage(message) {
+  const msgUint8 = new TextEncoder().encode(message);
+  const hashBuffer = await window.crypto.subtle.digest("SHA-256", msgUint8);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+  return hashHex;
+}
+var generateInteractiveCrossword = (answerLen, {
+  cellSize = 50,
+  cellColor = "#ffffff",
+  focusColor = "#ffcc00"
+} = {}) => {
+  const rootStyles = getComputedStyle(document.documentElement);
+  if (rootStyles.getPropertyValue("--cellSize")) cellSize = parseInt(rootStyles.getPropertyValue("--cellSize").trim());
+  const svgNS = "http://www.w3.org/2000/svg";
+  const xhtmlNS = "http://www.w3.org/1999/xhtml";
+  const width = answerLen * cellSize;
+  const height = cellSize;
+  const svg = document.createElementNS(svgNS, "svg");
+  svg.setAttribute("width", width.toString());
+  svg.setAttribute("height", height.toString());
+  for (let i = 0; i < answerLen; i++) {
+    const x = i * cellSize;
+    const rect = document.createElementNS(svgNS, "rect");
+    rect.setAttribute("x", x.toString());
+    rect.setAttribute("y", "0");
+    rect.setAttribute("width", cellSize.toString());
+    rect.setAttribute("height", cellSize.toString());
+    rect.setAttribute("fill", cellColor);
+    rect.setAttribute("stroke", "black");
+    svg.appendChild(rect);
+    const foreign = document.createElementNS(
+      svgNS,
+      "foreignObject"
+    );
+    foreign.setAttribute("x", x.toString());
+    foreign.setAttribute("y", "0");
+    foreign.setAttribute("width", cellSize.toString());
+    foreign.setAttribute("height", cellSize.toString());
+    const input = document.createElementNS(
+      xhtmlNS,
+      "input"
+    );
+    input.setAttribute("type", "text");
+    input.setAttribute("maxlength", "1");
+    input.classList.add("crossword-cell");
+    input.setAttribute("id", `cell-${i}`);
+    input.addEventListener("focus", () => {
+      input.select();
+      rect.setAttribute("fill", focusColor);
+    });
+    input.addEventListener("blur", () => {
+      rect.setAttribute("fill", cellColor);
+    });
+    input.addEventListener("input", (e) => {
+      const target = e.target;
+      target.value = target.value.toUpperCase();
+      const value = target.value;
+      if (value.length === 1 && i < answerLen - 1) {
+        const nextCell = document.getElementById(
+          `cell-${i + 1}`
+        );
+        nextCell?.focus();
+      }
+    });
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight" && i < answerLen - 1) {
+        e.preventDefault();
+        const nextCell = document.getElementById(
+          `cell-${i + 1}`
+        );
+        nextCell?.focus();
+      } else if (e.key === "ArrowLeft" && i > 0) {
+        e.preventDefault();
+        const prevCell = document.getElementById(
+          `cell-${i - 1}`
+        );
+        prevCell?.focus();
+      }
+    });
+    foreign.appendChild(input);
+    svg.appendChild(foreign);
+  }
+  const getUserInputHash = async () => {
+    let userAnswer = "";
+    for (let i = 0; i < answerLen; i++) {
+      const cell = document.getElementById(`cell-${i}`);
+      userAnswer += (cell?.value || "").toUpperCase();
+    }
+    return await digestMessage(userAnswer);
+  };
+  return { svg, getUserInputHash };
+};
+var compareHashes = async (getAnswerHash, getUserInputHash) => {
+  const resultDiv = document.getElementById("result");
+  const userInputHash = await getUserInputHash();
+  const answerHash = await getAnswerHash();
+  if (userInputHash === answerHash) {
+    resultDiv.textContent = "\u2705 Correct!";
+    resultDiv.style.color = "green";
+  } else {
+    resultDiv.textContent = "\u274C Try Again.";
+    resultDiv.style.color = "red";
+  }
+};
+export {
+  compareHashes,
+  generateInteractiveCrossword
+};
