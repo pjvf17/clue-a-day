@@ -15,10 +15,10 @@ const handler = (req: Request) => {
     return serveFile(req, join(Deno.cwd(), "src/style.css"));
   } else if (url.pathname === "/script.js") {
     // Serve the JS file
-    return serveFile(req, join(Deno.cwd(), "./dist/index.js"));
+    return serveFile(req, join(Deno.cwd(), "./demo/clue.js"));
   } else if (url.pathname === "/devHelper.js") {
     // Serve the JS file
-    return serveFile(req, join(Deno.cwd(), "./dist/devHelper.js"));
+    return serveFile(req, join(Deno.cwd(), "./demo/devHelper.js"));
   } else {
     // Return 404 for any other requests
     return new Response("Not Found", { status: 404 });

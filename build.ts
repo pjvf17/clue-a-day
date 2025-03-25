@@ -6,7 +6,7 @@ const env = config();
 const answer = env.ANSWER || "HELLO";
 
 const sharedConfig = {
-  entryPoints: ["src/index.ts"],
+  entryPoints: ["src/clue.ts"],
 };
 
 // const watchMode = Deno.args.includes("--watch");
@@ -14,11 +14,11 @@ const watchMode = true;
 
 async function buildAll() {
   const esmContext = await esbuild.context({
-    entryPoints: ["src/index.ts", "src/devHelper.ts"],
+    entryPoints: ["src/clue.ts", "src/devHelper.ts"],
     bundle: true,
     platform: "neutral",
     format: "esm",
-    outdir: "dist",
+    outdir: "demo",
     define: {
       "process.env.answer": JSON.stringify(answer),
     },

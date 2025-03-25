@@ -4,21 +4,6 @@
     <meta charset="UTF-8" />
     <title>Interactive Crossword</title>
     <link rel="stylesheet" href="style.css" />
-    <style>
-      input.crossword-cell {
-        width: 100%;
-        height: 100%;
-        font-size: 24px;
-        font-family: sans-serif;
-        text-align: center;
-        border: none;
-        outline: none;
-        background: transparent;
-      }
-      ::selection {
-        background: transparent; /* or any color you prefer */
-      }
-    </style>
   </head>
   <body>
     <div id="crossword-container"></div>
@@ -26,8 +11,6 @@
       <button id="submit-button">Submit</button>
       <div id="result" style="margin-top: 8px; font-size: 18px"></div>
     </div>
-    <script type="module" src="./script.js"></script>
-    <script type="module" src="./devHelper.js"></script>
     <script type="module">
       import {
         generateInteractiveCrossword,

@@ -1,4 +1,4 @@
-// src/index.ts
+// src/clue.ts
 var fnv32a = (str) => {
   var FNV1_32A_INIT = 2166136261;
   var hval = FNV1_32A_INIT;
