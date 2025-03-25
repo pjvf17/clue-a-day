@@ -1,38 +1,45 @@
-// Import esbuild from its Deno port. 
-// (Make sure to check for the latest version on https://deno.land/x/esbuild)
 import * as esbuild from "https://deno.land/x/esbuild@v0.17.19/mod.js";
+import { config } from "https://deno.land/x/dotenv/mod.ts";
+
+// Load environment variables
+const env = config();
+const answer = env.ANSWER || "HELLO";
 
 const sharedConfig = {
   entryPoints: ["src/index.ts"],
-  bundle: true,
-  minify: false,
 };
 
-const watchMode = Deno.args.includes("--watch");
+// const watchMode = Deno.args.includes("--watch");
+const watchMode = true;
 
 async function buildAll() {
-  // Optionally, you could build a CommonJS version as well:
-  // const cjsContext = await esbuild.context({
-  //   ...sharedConfig,
-  //   platform: 'node', // for CJS
-  //   outfile: "dist/index.cjs.js",
-  // });
-
   const esmContext = await esbuild.context({
-    ...sharedConfig,
-    platform: "neutral", // for ESM
+    entryPoints: ["src/index.ts", "src/devHelper.ts"],
+    bundle: true,
+    platform: "neutral",
     format: "esm",
-    outfile: "dist/clue.js",
+    outdir: "dist",
+    define: {
+      "process.env.answer": JSON.stringify(answer),
+    },
+  });
+
+  const esmContextMin = await esbuild.context({
+    ...sharedConfig,
+    platform: "neutral",
+    format: "esm",
+    outfile: "dist/clue.min.js",
+    minify: true,
   });
 
   if (watchMode) {
-    // await cjsContext.watch();
+    await esmContextMin.watch();
     await esmContext.watch();
     console.log("👀 Watching for changes...");
   } else {
-    // await cjsContext.rebuild();
+    await esmContextMin.rebuild();
     await esmContext.rebuild();
-    // await cjsContext.dispose();
+    await esmContextMin.dispose();
     await esmContext.dispose();
     console.log("✅ Build complete");
   }

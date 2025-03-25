@@ -1,5 +1,6 @@
 // below taken from:
 // https://gist.github.com/vaiorabbit/5657561
+// import process from "node:process";
 export const fnv32a = (str: string) => {
   var FNV1_32A_INIT = 0x811c9dc5;
   var hval = FNV1_32A_INIT;

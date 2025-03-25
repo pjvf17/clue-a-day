@@ -96,7 +96,6 @@ var compareHashes = (getAnswerHash, getUserInputHash) => {
     resultDiv.style.color = "red";
   }
 };
-console.log("moose");
 export {
   compareHashes,
   fnv32a,

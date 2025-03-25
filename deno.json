@@ -1,6 +1,13 @@
 {
-   "compilerOptions": {
-     "lib": ["deno.ns", "dom", "esnext", "deno.unstable"]
-   }
- }
- 
+  "compilerOptions": {
+    "lib": [
+      "deno.ns",
+      "dom"
+    ]
+  },
+  "tasks": {
+    "build": "deno run --allow-net --allow-read --allow-write --allow-env --allow-run build.ts",
+    "run": "deno run --allow-net --allow-read ./main.ts",
+    "start": "deno task build & deno task run"
+  }
+}
