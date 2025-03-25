@@ -4,6 +4,8 @@ This is a project to create a simple, framework-less solution to having a "daily
 
 The core functionality lies in `src/clue.ts`, the rest of the project largely serves as a demo.
 
+I'm currently using this project at my site [pjvf.me](https://pjvf.me) and I detail that implementation below at [#hugo](#hugo)
+
 ## typescript code
 
 ### generateInteractiveCrossword
