@@ -1,14 +1,6 @@
-async function digestMessage(message: string) {
-  const msgUint8 = new TextEncoder().encode(message); // encode as (utf-8) Uint8Array
-  const hashBuffer = await window.crypto.subtle.digest("SHA-256", msgUint8); // hash the message
-  const hashArray = Array.from(new Uint8Array(hashBuffer)); // convert buffer to byte array
-  const hashHex = hashArray
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join(""); // convert bytes to hex string
-  return hashHex;
-}
-
-function fnv32a(str: string) {
+// below taken from:
+// https://gist.github.com/vaiorabbit/5657561
+export const fnv32a = (str: string) => {
   var FNV1_32A_INIT = 0x811c9dc5;
   var hval = FNV1_32A_INIT;
   for (var i = 0; i < str.length; ++i) {
@@ -18,46 +10,33 @@ function fnv32a(str: string) {
   }
   return hval >>> 0;
 }
+
 export const generateInteractiveCrossword = (
   answerLen: number,
   {
-    cellSize = 50,
-    cellColor = "#ffffff",
-    focusColor = "#ffcc00",
+    cellColor = "#516770",
+    focusColor = "#695170",
   }: {
-    cellSize?: number;
     cellColor?: string;
     focusColor?: string;
   } = {}
 ): { container: HTMLDivElement, getUserInputHash: () => number } => {
-  const rootStyles = getComputedStyle(document.documentElement);
-  if (rootStyles.getPropertyValue("--cellSize"))
-    cellSize = parseInt(rootStyles.getPropertyValue("--cellSize").trim());
-  // const svgNS = "http://www.w3.org/2000/svg";
-  // const xhtmlNS = "http://www.w3.org/1999/xhtml";
-  const width = answerLen * cellSize;
-  const height = cellSize;
 
-  // const svg = document.createElementNS(svgNS, "svg") as SVGSVGElement;
-  // svg.setAttribute("width", width.toString());
-  // svg.setAttribute("height", height.toString());
   const container = document.getElementById(
     "crossword-container"
   ) as HTMLDivElement;
 
   for (let i = 0; i < answerLen; i++) {
-    const x = i * cellSize;
 
-    // Cell border
     const rect = document.createElement("div");
     container.appendChild(rect);
-    rect.className = "cell";
+    rect.className = "crossword-cell";
     rect.style.backgroundColor = cellColor;
 
     const input = document.createElement("input") as HTMLInputElement;
     input.setAttribute("type", "text");
     input.setAttribute("maxlength", "1");
-    input.classList.add("crossword-cell");
+    input.classList.add("crossword-cell-input");
     input.setAttribute("id", `cell-${i}`);
 
     input.addEventListener("focus", () => {
@@ -125,19 +104,14 @@ export const generateInteractiveCrossword = (
   return { container, getUserInputHash };
 };
 
-// const crossword = generateInteractiveCrossword(8, {
-//   cellColor: "#516770",
-//   focusColor: "#695170",
-// });
-// container?.appendChild(crossword.svg);
-
-// const submitButton = document.getElementById("submit-button");
 
 export const compareHashes = (
-  answerHash: () => string,
-  userInputHash: () => string
+  getAnswerHash: () => number,
+  getUserInputHash: () => number
 ) => {
   const resultDiv = document.getElementById("result") as HTMLElement;
+  const answerHash = getAnswerHash()
+  const userInputHash = getUserInputHash()
   if (userInputHash === answerHash) {
     resultDiv.textContent = "✅ Correct!";
     resultDiv.style.color = "green";
@@ -146,7 +120,3 @@ export const compareHashes = (
     resultDiv.style.color = "red";
   }
 };
-
-// const getAnswerHash = async () => await digestMessage("HELLO")
-
-// submitButton?.addEventListener("click", () => compareHashes(getAnswerHash));
