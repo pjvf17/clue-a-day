@@ -8,16 +8,15 @@ async function digestMessage(message: string) {
   return hashHex;
 }
 
-function fnv32a( str:string )
-{
-	var FNV1_32A_INIT = 0x811c9dc5;
-	var hval = FNV1_32A_INIT;
-	for ( var i = 0; i < str.length; ++i )
-	{
-		hval ^= str.charCodeAt(i);
-		hval += (hval << 1) + (hval << 4) + (hval << 7) + (hval << 8) + (hval << 24);
-	}
-	return hval >>> 0;
+function fnv32a(str: string) {
+  var FNV1_32A_INIT = 0x811c9dc5;
+  var hval = FNV1_32A_INIT;
+  for (var i = 0; i < str.length; ++i) {
+    hval ^= str.charCodeAt(i);
+    hval +=
+      (hval << 1) + (hval << 4) + (hval << 7) + (hval << 8) + (hval << 24);
+  }
+  return hval >>> 0;
 }
 export const generateInteractiveCrossword = (
   answerLen: number,
@@ -30,46 +29,32 @@ export const generateInteractiveCrossword = (
     cellColor?: string;
     focusColor?: string;
   } = {}
-): { svg: SVGSVGElement; getUserInputHash: () => number } => {
+): { container: HTMLDivElement, getUserInputHash: () => number } => {
   const rootStyles = getComputedStyle(document.documentElement);
   if (rootStyles.getPropertyValue("--cellSize"))
     cellSize = parseInt(rootStyles.getPropertyValue("--cellSize").trim());
-  const svgNS = "http://www.w3.org/2000/svg";
-  const xhtmlNS = "http://www.w3.org/1999/xhtml";
+  // const svgNS = "http://www.w3.org/2000/svg";
+  // const xhtmlNS = "http://www.w3.org/1999/xhtml";
   const width = answerLen * cellSize;
   const height = cellSize;
 
-  const svg = document.createElementNS(svgNS, "svg") as SVGSVGElement;
-  svg.setAttribute("width", width.toString());
-  svg.setAttribute("height", height.toString());
+  // const svg = document.createElementNS(svgNS, "svg") as SVGSVGElement;
+  // svg.setAttribute("width", width.toString());
+  // svg.setAttribute("height", height.toString());
+  const container = document.getElementById(
+    "crossword-container"
+  ) as HTMLDivElement;
 
   for (let i = 0; i < answerLen; i++) {
     const x = i * cellSize;
 
     // Cell border
-    const rect = document.createElementNS(svgNS, "rect") as SVGRectElement;
-    rect.setAttribute("x", x.toString());
-    rect.setAttribute("y", "0");
-    rect.setAttribute("width", cellSize.toString());
-    rect.setAttribute("height", cellSize.toString());
-    rect.setAttribute("fill", cellColor);
-    rect.setAttribute("stroke", "black");
-    svg.appendChild(rect);
+    const rect = document.createElement("div");
+    container.appendChild(rect);
+    rect.className = "cell";
+    rect.style.backgroundColor = cellColor;
 
-    // Input box
-    const foreign = document.createElementNS(
-      svgNS,
-      "foreignObject"
-    ) as SVGForeignObjectElement;
-    foreign.setAttribute("x", x.toString());
-    foreign.setAttribute("y", "0");
-    foreign.setAttribute("width", cellSize.toString());
-    foreign.setAttribute("height", cellSize.toString());
-
-    const input = document.createElementNS(
-      xhtmlNS,
-      "input"
-    ) as HTMLInputElement;
+    const input = document.createElement("input") as HTMLInputElement;
     input.setAttribute("type", "text");
     input.setAttribute("maxlength", "1");
     input.classList.add("crossword-cell");
@@ -77,11 +62,11 @@ export const generateInteractiveCrossword = (
 
     input.addEventListener("focus", () => {
       input.select();
-      rect.setAttribute("fill", focusColor);
+      rect.style.backgroundColor = focusColor;
     });
 
     input.addEventListener("blur", () => {
-      rect.setAttribute("fill", cellColor);
+      rect.style.backgroundColor = cellColor;
     });
 
     input.addEventListener("input", (e: Event) => {
@@ -119,15 +104,13 @@ export const generateInteractiveCrossword = (
             `cell-${i - 1}`
           ) as HTMLInputElement;
           prevCell?.focus();
-          prevCell.value = ""
+          prevCell.value = "";
         } else {
-          curCell.value = ""
+          curCell.value = "";
         }
       }
     });
-
-    foreign.appendChild(input);
-    svg.appendChild(foreign);
+    rect.appendChild(input);
   }
 
   const getUserInputHash = ():number => {
@@ -139,17 +122,16 @@ export const generateInteractiveCrossword = (
     return fnv32a(userAnswer);
   };
 
-  return { svg, getUserInputHash };
+  return { container, getUserInputHash };
 };
 
-const container = document.getElementById("crossword-container");
-const crossword = generateInteractiveCrossword(8, {
-  cellColor: "#516770",
-  focusColor: "#695170",
-});
-container?.appendChild(crossword.svg);
+// const crossword = generateInteractiveCrossword(8, {
+//   cellColor: "#516770",
+//   focusColor: "#695170",
+// });
+// container?.appendChild(crossword.svg);
 
-const submitButton = document.getElementById("submit-button");
+// const submitButton = document.getElementById("submit-button");
 
 export const compareHashes = (
   answerHash: () => string,
