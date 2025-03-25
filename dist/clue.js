@@ -109,6 +109,13 @@ var generateInteractiveCrossword = (answerLen, {
   };
   return { svg, getUserInputHash };
 };
+var container = document.getElementById("crossword-container");
+var crossword = generateInteractiveCrossword(8, {
+  cellColor: "#516770",
+  focusColor: "#695170"
+});
+container?.appendChild(crossword.svg);
+var submitButton = document.getElementById("submit-button");
 var compareHashes = (answerHash, userInputHash) => {
   const resultDiv = document.getElementById("result");
   if (userInputHash === answerHash) {

@@ -142,14 +142,14 @@ export const generateInteractiveCrossword = (
   return { svg, getUserInputHash };
 };
 
-// const container = document.getElementById("crossword-container");
-// const crossword = generateInteractiveCrossword(8, {
-//   cellColor: "#516770",
-//   focusColor: "#695170",
-// });
-// container?.appendChild(crossword.svg);
+const container = document.getElementById("crossword-container");
+const crossword = generateInteractiveCrossword(8, {
+  cellColor: "#516770",
+  focusColor: "#695170",
+});
+container?.appendChild(crossword.svg);
 
-// const submitButton = document.getElementById("submit-button");
+const submitButton = document.getElementById("submit-button");
 
 export const compareHashes = (
   answerHash: () => string,

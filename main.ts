@@ -15,7 +15,7 @@ const handler = async (req: Request) => {
     return serveFile(req, join(Deno.cwd(), "style.css"));
   } else if (url.pathname === "/script.js") {
     // Serve the JS file
-    return serveFile(req, join(Deno.cwd(), "./dist/index.js"));
+    return serveFile(req, join(Deno.cwd(), "./dist/clue.js"));
   } else {
     // Return 404 for any other requests
     return new Response("Not Found", { status: 404 });
