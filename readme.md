@@ -10,11 +10,11 @@ The core functionality lies in `src/clue.ts`, the rest of the project largely se
 
 This function looks for an element with the id "crossword-container" and creates the html elements to generate the answer box which looks like the following:
 
-<div style="text-align: center;">
+<p align="center">
   <img src="images/example.png" width="400"/>
   <br/>
   <br/>
-</div>
+</p>
 
 ```ts
 export const generateInteractiveCrossword = (
