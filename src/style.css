@@ -49,3 +49,38 @@ body {
   justify-content: center;
   flex-basis: fit-content;
 }
+
+#clue-a-day {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.clue-check-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+
+#submit-button {
+  background: transparent;
+  color: #ddd;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  padding: 0.4rem 0.8rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+#submit-button:hover {
+  background-color: #ddd;
+  color: #173440;
+}
+
+#submit-button:active {
+  transform: scale(0.98);
+}
