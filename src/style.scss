@@ -1,0 +1,195 @@
+@use "sass:color";
+
+$dark-blue: oklab(0.31 -0.03 -0.03);
+$active-cell-bg: oklab(0.47 0.04 -0.04);
+$cell-input-bg: color.adjust($dark-blue, $lightness: 0.2);
+$revealed-letter-bg: color.adjust($dark-blue, $lightness: 0.1);
+$text-color: oklab(0.9 0 0);
+$revealed-letter-text: color.adjust($text-color, $lightness: -0.1);
+$revealed-letter-active-bg: color.adjust(
+  color.mix($revealed-letter-bg, $active-cell-bg, 50%, oklab),
+  $lightness: -0.05
+);
+
+$button-bg: transparent;
+$button-color: $text-color;
+$button-border: 2px solid $text-color;
+$button-border-radius: 4px;
+$button-padding: 0.4rem 0.8rem;
+$button-font-size: 1rem;
+$button-cursor: pointer;
+$button-transition: background-color 0.3s, color 0.3s;
+$button-hover-bg: $text-color;
+$button-hover-color: $dark-blue;
+$button-active-transform: scale(0.98);
+
+$dropdown-bg: $revealed-letter-bg;
+$dropdown-border: 1px solid $text-color;
+$dropdown-border-radius: 4px;
+$dropdown-padding: 0.5rem;
+$dropdown-gap: 0.5rem;
+$dropdown-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.35);
+
+@mixin button-styles {
+  background: $button-bg;
+  color: $button-color;
+  border: $button-border;
+  border-radius: $button-border-radius;
+  padding: $button-padding;
+  font-size: $button-font-size;
+  cursor: $button-cursor;
+  transition: $button-transition;
+
+  &:hover {
+    background-color: $button-hover-bg;
+    color: $button-hover-color;
+  }
+
+  &:active {
+    transform: $button-active-transform;
+  }
+}
+
+body {
+  background-color: $dark-blue;
+  color: $text-color;
+}
+
+@mixin flex-center-column($margin: 0) {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: $margin;
+}
+
+@mixin crossword-border($left, $right) {
+  border-width: 2px $right 2px $left;
+  border-style: solid;
+  border-color: black;
+}
+
+.crossword-cell {
+  /* shorthand for flex-grow, flex-shrink, flex-basis */
+  /* flex:grow = 0 means it won't grow beyond the "base" of 50px */
+  /* flex:shrink = 1 means that cells will equally shrink as needed, keeping the aspect ratio below */
+  flex: 0 1 50px;
+  aspect-ratio: 1;
+  display: flex;
+  @include crossword-border(1px, 1px);
+}
+
+.crossword-cell-input {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+
+  /* scales the font "relative to font-size of the root element" */
+  font-size: 2rem;
+  border: none;
+  cursor: pointer;
+  caret-color: transparent;
+  outline: none;
+  padding: 0;
+  color: inherit;
+  background-color: $cell-input-bg;
+  border-radius: 0px;
+}
+
+.active-cell {
+  background-color: $active-cell-bg;
+}
+
+/* The below two mean that the border on the cell on the far right and far left matches the border throughout. */
+.crossword-cell:last-child {
+  @include crossword-border(1px, 2px);
+}
+.crossword-cell:first-child {
+  @include crossword-border(2px, 1px);
+}
+
+.crossword-cell-input::selection {
+  background: transparent;
+}
+
+#crossword-container {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  flex-basis: fit-content;
+}
+
+#clue-a-day {
+  @include flex-center-column;
+}
+
+#result {
+  min-width: 5.8em;
+  text-align: center;
+}
+
+.clue-check-container {
+  @include flex-center-column(1em);
+}
+
+.clue-button-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.3fr; /* two equal-width columns */
+  gap: 20px;
+  justify-items: center; /* center buttons horizontally in each grid cell */
+  align-items: start; /* align vertically (or 'center' if you want them middle-aligned) */
+}
+
+.button {
+  @include button-styles;
+}
+
+#submit-button,
+#reveal-button,
+#check-button {
+  @extend .button;
+}
+
+.revealed-letter {
+  background-color: $revealed-letter-bg;
+  color: $revealed-letter-text;
+  font-weight: normal;
+}
+
+.revealed-letter.active-cell {
+  background-color: $revealed-letter-active-bg;
+}
+
+.check-dropdown {
+  position: relative;
+  display: inline-block;
+  @include flex-center-column(1em);
+}
+
+.check-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  background: $dropdown-bg;
+  border: $dropdown-border;
+  border-radius: $dropdown-border-radius;
+  box-shadow: $dropdown-box-shadow;
+  padding: $dropdown-padding;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: $dropdown-gap;
+  opacity: 0;
+  transform: translateY(-0.5em);
+  // visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.1s ease, transform 0.3s ease;
+}
+
+.check-dropdown.open .check-dropdown-menu {
+  opacity: 1;
+  transform: translateY(0);
+  // visibility: visible;
+  pointer-events: auto;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}

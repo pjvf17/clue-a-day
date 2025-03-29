@@ -3,15 +3,29 @@
   <head>
     <meta charset="UTF-8" />
     <title>Interactive Crossword</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="clue.css" />
   </head>
   <body>
     <div id="clue-a-day">
       <p class="clue">Hell adds nothing to greeting (5)</p>
       <div id="crossword-container"></div>
-      <div class="clue-check-container" style="margin-top: 10px">
-        <button id="submit-button">Submit</button>
-        <div id="result" style="margin-top: 8px; font-size: 18px"></div>
+      <div class="clue-button-container">
+        <div class="clue-check-container">
+          <button id="submit-button">Submit</button>
+          <div id="result" style="margin-top: 8px; font-size: 18px"></div>
+        </div>
+        <div class="check-dropdown">
+          <button id="check-button" class="button">Check</button>
+          <div class="check-dropdown-menu">
+            <button id="check-letter-button" class="button">
+              Check Letter
+            </button>
+            <button id="check-word-button" class="button">Check Word</button>
+          </div>
+        </div>
+        <div class="clue-check-container">
+          <button id="reveal-button">Reveal Letter</button>
+        </div>
       </div>
     </div>
     <script type="module">
@@ -22,18 +36,38 @@
       } from "./script.js";
       import { loadAnswerFromEnv } from "./devHelper.js";
 
-      const crossword = generateInteractiveCrossword(5, {
-        cellColor: "#516770",
-        focusColor: "#695170",
-      });
+      const crossword = generateInteractiveCrossword(
+        loadAnswerFromEnv().length
+      );
 
       const submitButton = document.getElementById("submit-button");
+      const revealButton = document.getElementById("reveal-button");
 
       const getAnswerHash = () => fnv32a(loadAnswerFromEnv());
+      const answerBase64 = btoa(loadAnswerFromEnv());
 
       submitButton?.addEventListener("click", () =>
         compareHashes(getAnswerHash, crossword.getUserInputHash)
       );
+
+      revealButton?.addEventListener("click", () =>
+        crossword.revealLetter(answerBase64)
+      );
+
+      document
+        .getElementById("check-button")
+        .addEventListener("click", function (event) {
+          event.stopPropagation();
+          this.parentElement.classList.toggle("open");
+        });
+
+      document.addEventListener("click", function () {
+        document
+          .querySelectorAll(".check-dropdown.open")
+          .forEach(function (dropdown) {
+            dropdown.classList.remove("open");
+          });
+      });
     </script>
   </body>
 </html>

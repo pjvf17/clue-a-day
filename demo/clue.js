@@ -8,71 +8,88 @@ var fnv32a = (str) => {
   }
   return hval >>> 0;
 };
-var generateInteractiveCrossword = (answerLen, {
-  cellColor = "#516770",
-  focusColor = "#695170"
-} = {}) => {
+var generateInteractiveCrossword = (answerLen) => {
   const container = document.getElementById(
     "crossword-container"
   );
+  function getCell(index) {
+    return document.getElementById(`cell-${index}`);
+  }
+  function focusNextCell(i, skip = true) {
+    var _a;
+    let nextIndex = i;
+    while (nextIndex < answerLen - 1) {
+      nextIndex++;
+      const cell = getCell(nextIndex);
+      if (!skip || !(cell == null ? void 0 : cell.classList.contains("revealed-letter"))) {
+        break;
+      }
+    }
+    (_a = getCell(nextIndex)) == null ? void 0 : _a.focus();
+    return nextIndex;
+  }
+  function focusPrevCell(i, skip = true) {
+    var _a;
+    let prevIndex = i;
+    while (prevIndex > 0) {
+      prevIndex--;
+      const cell = getCell(prevIndex);
+      if (!skip || !(cell == null ? void 0 : cell.classList.contains("revealed-letter"))) {
+        break;
+      }
+    }
+    (_a = getCell(prevIndex)) == null ? void 0 : _a.focus();
+    return prevIndex;
+  }
   for (let i = 0; i < answerLen; i++) {
     const rect = document.createElement("div");
-    container.appendChild(rect);
     rect.className = "crossword-cell";
-    rect.style.backgroundColor = cellColor;
+    container.appendChild(rect);
     const input = document.createElement("input");
-    input.setAttribute("type", "text");
-    input.setAttribute("maxlength", "1");
+    input.type = "text";
     input.classList.add("crossword-cell-input");
-    input.setAttribute("id", `cell-${i}`);
+    input.id = `cell-${i}`;
+    rect.appendChild(input);
     input.addEventListener("focus", () => {
-      input.select();
-      rect.style.backgroundColor = focusColor;
-    });
-    input.addEventListener("blur", () => {
-      rect.style.backgroundColor = cellColor;
+      const previousActive = document.querySelector(".active-cell");
+      if (previousActive && previousActive !== input) {
+        previousActive.classList.remove("active-cell");
+      }
+      input.classList.add("active-cell");
     });
     input.addEventListener("input", (e) => {
       const target = e.target;
-      target.value = target.value.toUpperCase();
-      const value = target.value;
-      if (value.length === 1 && i < answerLen - 1) {
-        const nextCell = document.getElementById(
-          `cell-${i + 1}`
-        );
-        nextCell == null ? void 0 : nextCell.focus();
+      const value = target.value.toUpperCase();
+      if (input.classList.contains("revealed-letter")) {
+        target.value = value.charAt(0);
+        focusNextCell(i);
+        return;
+      }
+      if (value.length > 0) {
+        target.value = value.charAt(value.length - 1);
+        focusNextCell(i);
       }
     });
     input.addEventListener("keydown", (e) => {
-      if (e.key === "ArrowRight" && i < answerLen - 1) {
+      if (e.key === "ArrowRight") {
         e.preventDefault();
-        const nextCell = document.getElementById(
-          `cell-${i + 1}`
-        );
-        nextCell == null ? void 0 : nextCell.focus();
-      } else if (e.key === "ArrowLeft" && i > 0) {
+        focusNextCell(i, false);
+      } else if (e.key === "ArrowLeft") {
         e.preventDefault();
-        const prevCell = document.getElementById(
-          `cell-${i - 1}`
-        );
-        prevCell == null ? void 0 : prevCell.focus();
-      } else if (e.key === "Backspace" && i > 0) {
+        focusPrevCell(i, false);
+      } else if (e.key === "Backspace") {
         e.preventDefault();
-        const curCell = document.getElementById(
-          `cell-${i}`
-        );
-        if (curCell.value == "") {
-          const prevCell = document.getElementById(
-            `cell-${i - 1}`
-          );
-          prevCell == null ? void 0 : prevCell.focus();
-          prevCell.value = "";
-        } else {
-          curCell.value = "";
+        if (input.value === "") {
+          const prevCell = getCell(focusPrevCell(i, false));
+          if (prevCell && !(prevCell == null ? void 0 : prevCell.classList.contains("revealed-letter"))) {
+            prevCell.value = "";
+          }
+        } else if (!input.classList.contains("revealed-letter")) {
+          input.value = "";
         }
+        focusPrevCell(i, false);
       }
     });
-    rect.appendChild(input);
   }
   const getUserInputHash = () => {
     let userAnswer = "";
@@ -82,7 +99,32 @@ var generateInteractiveCrossword = (answerLen, {
     }
     return fnv32a(userAnswer);
   };
-  return { container, getUserInputHash };
+  const setLetter = (pos, c) => {
+    const cell = document.getElementById(`cell-${pos}`);
+    cell.value = c;
+    cell.focus();
+    cell.classList.add("revealed-letter");
+  };
+  const getActive = () => {
+    const active = document.querySelector(
+      ".active-cell"
+    );
+    if (!active)
+      return -1;
+    const allInputs = Array.from(document.querySelectorAll("input"));
+    return allInputs.indexOf(active);
+  };
+  const revealLetter = (answerBase64, pos) => {
+    const decoded = atob(answerBase64);
+    if (!pos)
+      pos = getActive();
+    if (pos < 0 || pos >= decoded.length) {
+      throw new Error("Position out of bounds");
+    }
+    const c = decoded.charAt(pos);
+    setLetter(pos, c);
+  };
+  return { container, getUserInputHash, setLetter, getActive, revealLetter };
 };
 var compareHashes = (getAnswerHash, getUserInputHash) => {
   const resultDiv = document.getElementById("result");

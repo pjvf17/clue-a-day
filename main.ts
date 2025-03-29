@@ -10,9 +10,9 @@ const handler = (req: Request) => {
   if (url.pathname === "/") {
     // Serve the HTML file
     return serveFile(req, join(Deno.cwd(), "index.html"));
-  } else if (url.pathname === "/style.css") {
+  } else if (url.pathname === "/clue.css") {
     // Serve the CSS file
-    return serveFile(req, join(Deno.cwd(), "src/style.css"));
+    return serveFile(req, join(Deno.cwd(), "/demo/clue.css"));
   } else if (url.pathname === "/script.js") {
     // Serve the JS file
     return serveFile(req, join(Deno.cwd(), "./demo/clue.js"));

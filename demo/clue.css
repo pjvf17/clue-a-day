@@ -1,0 +1,141 @@
+/* src/style.scss */
+body {
+  background-color: oklab(31% -0.03 -0.03);
+  color: oklab(90% 0 0);
+}
+.crossword-cell {
+  flex: 0 1 50px;
+  aspect-ratio: 1;
+  display: flex;
+  border-width: 2px 1px 2px 1px;
+  border-style: solid;
+  border-color: black;
+}
+.crossword-cell-input {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  font-size: 2rem;
+  border: none;
+  cursor: pointer;
+  caret-color: transparent;
+  outline: none;
+  padding: 0;
+  color: inherit;
+  background-color: oklab(51% -0.03 -0.03);
+  border-radius: 0px;
+}
+.active-cell {
+  background-color: oklab(47% 0.04 -0.04);
+}
+.crossword-cell:last-child {
+  border-width: 2px 2px 2px 1px;
+  border-style: solid;
+  border-color: black;
+}
+.crossword-cell:first-child {
+  border-width: 2px 1px 2px 2px;
+  border-style: solid;
+  border-color: black;
+}
+.crossword-cell-input::selection {
+  background: transparent;
+}
+#crossword-container {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  flex-basis: fit-content;
+}
+#clue-a-day {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+}
+#result {
+  min-width: 5.8em;
+  text-align: center;
+}
+.clue-check-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 1em;
+}
+.clue-button-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.3fr;
+  gap: 20px;
+  justify-items: center;
+  align-items: start;
+}
+.button,
+#submit-button,
+#reveal-button,
+#check-button {
+  background: transparent;
+  color: oklab(90% 0 0);
+  border: 2px solid oklab(90% 0 0);
+  border-radius: 4px;
+  padding: 0.4rem 0.8rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+.button:hover,
+#submit-button:hover,
+#reveal-button:hover,
+#check-button:hover {
+  background-color: oklab(90% 0 0);
+  color: oklab(31% -0.03 -0.03);
+}
+.button:active,
+#submit-button:active,
+#reveal-button:active,
+#check-button:active {
+  transform: scale(0.98);
+}
+.revealed-letter {
+  background-color: oklab(41% -0.03 -0.03);
+  color: oklab(80% 0 0);
+  font-weight: normal;
+}
+.revealed-letter.active-cell {
+  background-color: oklab(39% 0.005 -0.035);
+}
+.check-dropdown {
+  position: relative;
+  display: inline-block;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 1em;
+}
+.check-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  background: oklab(41% -0.03 -0.03);
+  border: 1px solid oklab(90% 0 0);
+  border-radius: 4px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.35);
+  padding: 0.5rem;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  opacity: 0;
+  transform: translateY(-0.5em);
+  pointer-events: none;
+  transition: opacity 0.1s ease, transform 0.3s ease;
+}
+.check-dropdown.open .check-dropdown-menu {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}

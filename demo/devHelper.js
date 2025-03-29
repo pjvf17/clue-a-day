@@ -1,6 +1,6 @@
 // src/devHelper.ts
 var loadAnswerFromEnv = () => {
-  return "HELLO";
+  return "HELLOOOOO";
 };
 export {
   loadAnswerFromEnv

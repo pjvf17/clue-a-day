@@ -1,5 +1,7 @@
 import * as esbuild from "https://deno.land/x/esbuild@v0.17.19/mod.js";
 import { config } from "https://deno.land/x/dotenv/mod.ts";
+import { sassPlugin } from "npm:esbuild-sass-plugin";
+
 
 // Load environment variables
 const env = config();
@@ -15,6 +17,7 @@ const watchMode = true;
 async function buildAll() {
   const esmContext = await esbuild.context({
     entryPoints: ["src/clue.ts", "src/devHelper.ts"],
+    plugins: [sassPlugin()],
     bundle: true,
     platform: "neutral",
     format: "esm",
