@@ -1,15 +1,22 @@
 @use "sass:color";
 
 $dark-blue: oklab(0.31 -0.03 -0.03);
+$bg-blue: #01242e;
 $active-cell-bg: oklab(0.47 0.04 -0.04);
 $cell-input-bg: color.adjust($dark-blue, $lightness: 0.2);
 $revealed-letter-bg: color.adjust($dark-blue, $lightness: 0.1);
 $text-color: oklab(0.9 0 0);
 $revealed-letter-text: color.adjust($text-color, $lightness: -0.1);
 $revealed-letter-active-bg: color.adjust(
-  color.mix($revealed-letter-bg, $active-cell-bg, 50%, oklab),
+  color.mix($revealed-letter-bg, $active-cell-bg, 30%, oklab),
   $lightness: -0.05
 );
+$confirmed-letter-bg: #55794b;
+$confirmed-letter-active-bg: color.adjust($confirmed-letter-bg, $lightness: -10%);
+$wrong-letter-bg: #79584b;
+$wrong-letter-active-bg: color.adjust($wrong-letter-bg, $lightness: -10%);
+
+
 
 $button-bg: transparent;
 $button-color: $text-color;
@@ -37,21 +44,26 @@ $dropdown-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.35);
   border-radius: $button-border-radius;
   padding: $button-padding;
   font-size: $button-font-size;
-  cursor: $button-cursor;
   transition: $button-transition;
+  
+  &:not(:disabled) {
+    cursor: $button-cursor;
+    &:hover {
+      background-color: $button-hover-bg;
+      color: $button-hover-color;
+    }
 
-  &:hover {
-    background-color: $button-hover-bg;
-    color: $button-hover-color;
+    &:active {
+      transform: $button-active-transform;
+    }
   }
-
-  &:active {
-    transform: $button-active-transform;
+  :disabled {
+    cursor: default;
   }
 }
 
 body {
-  background-color: $dark-blue;
+  background-color: $bg-blue;
   color: $text-color;
 }
 
@@ -126,6 +138,8 @@ body {
 #result {
   min-width: 5.8em;
   text-align: center;
+  font-size: .85em;
+  margin-top: .5em
 }
 
 .clue-check-container {
@@ -158,6 +172,24 @@ body {
 
 .revealed-letter.active-cell {
   background-color: $revealed-letter-active-bg;
+}
+
+
+.wrong-letter {
+  background-color: $wrong-letter-bg;
+  font-weight: normal;
+}
+
+.wrong-letter.active-cell {
+  background-color: $wrong-letter-active-bg;
+}
+.confirmed-letter {
+  background-color: $confirmed-letter-bg;
+  font-weight: normal;
+}
+
+.confirmed-letter.active-cell {
+  background-color: $confirmed-letter-active-bg;
 }
 
 .check-dropdown {

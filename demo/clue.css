@@ -1,6 +1,6 @@
 /* src/style.scss */
 body {
-  background-color: oklab(31% -0.03 -0.03);
+  background-color: #01242e;
   color: oklab(90% 0 0);
 }
 .crossword-cell {
@@ -57,6 +57,8 @@ body {
 #result {
   min-width: 5.8em;
   text-align: center;
+  font-size: 0.85em;
+  margin-top: 0.5em;
 }
 .clue-check-container {
   display: flex;
@@ -82,21 +84,32 @@ body {
   border-radius: 4px;
   padding: 0.4rem 0.8rem;
   font-size: 1rem;
-  cursor: pointer;
   transition: background-color 0.3s, color 0.3s;
 }
-.button:hover,
-#submit-button:hover,
-#reveal-button:hover,
-#check-button:hover {
+.button:not(:disabled),
+#submit-button:not(:disabled),
+#reveal-button:not(:disabled),
+#check-button:not(:disabled) {
+  cursor: pointer;
+}
+.button:not(:disabled):hover,
+#submit-button:not(:disabled):hover,
+#reveal-button:not(:disabled):hover,
+#check-button:not(:disabled):hover {
   background-color: oklab(90% 0 0);
   color: oklab(31% -0.03 -0.03);
 }
-.button:active,
-#submit-button:active,
-#reveal-button:active,
-#check-button:active {
+.button:not(:disabled):active,
+#submit-button:not(:disabled):active,
+#reveal-button:not(:disabled):active,
+#check-button:not(:disabled):active {
   transform: scale(0.98);
+}
+.button :disabled,
+#submit-button :disabled,
+#reveal-button :disabled,
+#check-button :disabled {
+  cursor: default;
 }
 .revealed-letter {
   background-color: oklab(41% -0.03 -0.03);
@@ -104,7 +117,21 @@ body {
   font-weight: normal;
 }
 .revealed-letter.active-cell {
-  background-color: oklab(39% 0.005 -0.035);
+  background-color: oklab(40.2% 0.019 -0.037);
+}
+.wrong-letter {
+  background-color: #79584b;
+  font-weight: normal;
+}
+.wrong-letter.active-cell {
+  background-color: rgb(89.5153061224, 65.1020408163, 55.4846938776);
+}
+.confirmed-letter {
+  background-color: #55794b;
+  font-weight: normal;
+}
+.confirmed-letter.active-cell {
+  background-color: rgb(62.8826530612, 89.5153061224, 55.4846938776);
 }
 .check-dropdown {
   position: relative;

@@ -24,26 +24,31 @@ async function buildAll() {
     outdir: "demo",
     define: {
       "process.env.answer": JSON.stringify(answer),
+      "__DEV__": JSON.stringify(true),
     },
   });
 
+  // Production build context
   const esmContextMin = await esbuild.context({
     ...sharedConfig,
     platform: "neutral",
     format: "esm",
     outfile: "dist/clue.min.js",
     minify: true,
+    define: {
+      "__DEV__": JSON.stringify(false),
+    },
   });
 
   if (watchMode) {
-    await esmContextMin.watch();
     await esmContext.watch();
+    await esmContextMin.watch();
     console.log("👀 Watching for changes...");
   } else {
-    await esmContextMin.rebuild();
     await esmContext.rebuild();
-    await esmContextMin.dispose();
+    await esmContextMin.rebuild();
     await esmContext.dispose();
+    await esmContextMin.dispose();
     console.log("✅ Build complete");
   }
 }

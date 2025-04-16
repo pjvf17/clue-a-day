@@ -54,20 +54,17 @@
         crossword.revealLetter(answerBase64)
       );
 
-      document
-        .getElementById("check-button")
-        .addEventListener("click", function (event) {
-          event.stopPropagation();
-          this.parentElement.classList.toggle("open");
-        });
+      const checkLetter = document.getElementById("check-letter-button")
 
-      document.addEventListener("click", function () {
-        document
-          .querySelectorAll(".check-dropdown.open")
-          .forEach(function (dropdown) {
-            dropdown.classList.remove("open");
-          });
-      });
+      checkLetter.addEventListener("click", () =>{
+        crossword.checkLetter(answerBase64)
+      })
+      
+      const checkWord = document.getElementById("check-word-button")
+      
+      checkWord.addEventListener("click", () =>{
+        crossword.checkWord(answerBase64)
+      })
     </script>
   </body>
 </html>
